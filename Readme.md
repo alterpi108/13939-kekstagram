@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Наталья Самбурова](https://up.htmlacademy.ru/javascript/14/user/13939).
-* Наставник: `Неизвестно`.
+* Наставник: [Всеволод Артемьев](https://up.htmlacademy.ru/javascript/14/user/459331).
 
 ---
 
