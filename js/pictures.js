@@ -26,14 +26,6 @@ var descriptions = [
 var photoTemplate = document.querySelector('#picture').content;
 var photoItem = document.querySelector('.pictures');
 
-var bigPhoto = document.querySelector('.big-picture');
-bigPhoto.classList.remove('hidden');
-
-var social = bigPhoto.querySelector('.social');
-social.querySelector('.social__comment-count').classList.add('visually-hidden');
-social.querySelector('.social__loadmore').classList.add('visually-hidden');
-var socialComments = document.querySelector('.social__comments');
-
 var getRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
@@ -56,7 +48,7 @@ var generatePhotoList = function (quantity) {
       url: 'photos/' + i + '.jpg',
       likes: getRandomNumber(LIKE_MIN, LIKE_MAX),
       comments: getUserComments(getRandomNumber(COMMENT_MIN, COMMENT_MAX)),
-      description: descriptions[getRandomNumber(0, descriptions.length)]
+      description: descriptions[getRandomNumber(0, descriptions.length - 1)]
     };
     photos.push(photo);
   }
@@ -83,10 +75,22 @@ var renderPhotosList = function (photos) {
   photoItem.appendChild(fragment);
 };
 
+var createBigPhotoElement = function (photo) {
+  var bigPhoto = document.querySelector('.big-picture');
+  var socialComments = document.querySelector('.social__comments');
+
+  bigPhoto.querySelector('.big-picture__img').src = photo.url;
+  bigPhoto.querySelector('.likes-count').textContent = photo.likes;
+  bigPhoto.querySelector('.social__caption').textContent = photo.description;
+
+  bigPhoto.classList.remove('hidden');
+
+  // Не нравится вариант решения с удалением комментариев, может, есть более разумный способ?
+  while (socialComments.firstChild) {
+    socialComments.removeChild(socialComments.firstChild);
+  }
+};
+
 var allPhotos = generatePhotoList(PHOTO_QUANTITY);
 renderPhotosList(allPhotos);
-
-// Не нравится вариант решения с удалением комментариев, может, есть более разумный способ?
-while (socialComments.firstChild) {
-  socialComments.removeChild(socialComments.firstChild);
-}
+createBigPhotoElement(allPhotos[0]);
