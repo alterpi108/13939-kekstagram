@@ -84,31 +84,24 @@ var fillBigPhoto = function (photoData) {
   var bigPhoto = document.querySelector('.big-picture');
   bigPhoto.classList.remove('hidden');
 
-  bigPhoto.querySelector('.big-picture__img img').src = photoData.url;
+  bigPhoto.querySelector('.big-picture__img').src = photoData.url;
   bigPhoto.querySelector('.likes-count').textContent = photoData.likes;
   bigPhoto.querySelector('.comments-count').textContent = photoData.comments.length;
   bigPhoto.querySelector('.social__caption').textContent = photoData.description;
 
   socialComments.innerHTML = '';
 
-  for (var i = 0; i < photoData.comments.length; i++) {
-    var photoComment = document.createElement('li');
-    photoComment.classList.add('social__comment', 'social__comment--text');
-    socialComments.appendChild(photoComment);
+  var createPhotoComment = function () {
+    var photoComment = '';
 
-    var photoCommentAvatar = document.createElement('img');
-    photoCommentAvatar.classList.add('social__picture');
-    photoCommentAvatar.src = 'img/avatar-' + getRandomNumber(1, 6) + '.svg';
-    photoCommentAvatar.alt = 'Аватар комментатора фотографии';
-    photoCommentAvatar.width = 35;
-    photoCommentAvatar.height = 35;
-    photoComment.appendChild(photoCommentAvatar);
+    for (var i = 0; i < photoData.comments.length; i++) {
+      photoComment += '<li class="social__comment social__comment--text">' + '<img class="social__picture" src="img/avatar-' + getRandomNumber(1, 6) + '.svg" alt="Аватар комментатора фотографии" width="35" height="35">' + '<p class="social__text">' + photoData.comments[i] + '</p>' + '</li>';
+    }
 
-    var photoCommentText = document.createElement('p');
-    photoCommentText.classList.add('social__text');
-    photoCommentText.textContent = photoData.comments[i];
-    photoComment.appendChild(photoCommentText);
-  }
+    return photoComment;
+  };
+
+  socialComments.innerHTML = createPhotoComment();
 };
 
 var allPhotos = generatePhotoList(PHOTO_QUANTITY);
