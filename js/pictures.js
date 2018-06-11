@@ -84,7 +84,7 @@ var fillBigPhoto = function (photoData) {
   var bigPhoto = document.querySelector('.big-picture');
   bigPhoto.classList.remove('hidden');
 
-  bigPhoto.querySelector('.big-picture__img').src = photoData.url;
+  bigPhoto.querySelector('.big-picture__img img').src = photoData.url;
   bigPhoto.querySelector('.likes-count').textContent = photoData.likes;
   bigPhoto.querySelector('.comments-count').textContent = photoData.comments.length;
   bigPhoto.querySelector('.social__caption').textContent = photoData.description;
@@ -106,7 +106,7 @@ var fillBigPhoto = function (photoData) {
 
     var photoCommentText = document.createElement('p');
     photoCommentText.classList.add('social__text');
-    photoCommentText.textContent = photoData.comments[0];
+    photoCommentText.textContent = photoData.comments[i];
     photoComment.appendChild(photoCommentText);
   }
 };
