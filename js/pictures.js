@@ -5,6 +5,9 @@ var LIKE_MIN = 15;
 var LIKE_MAX = 200;
 var COMMENT_MIN = 1;
 var COMMENT_MAX = 2;
+var ESC_KEYCODE = 27;
+var DEFAULT_SIZE = 100;
+var SIZE_STEP = 25;
 
 var PHOTO_COMMENTS = [
   'Всё отлично!',
@@ -27,12 +30,20 @@ var photoTemplate = document.querySelector('#picture').content;
 var photoItem = document.querySelector('.pictures');
 
 var bigPhoto = document.querySelector('.big-picture');
-bigPhoto.classList.remove('hidden');
 
 var social = document.querySelector('.social');
 social.querySelector('.social__comment-count').classList.add('visually-hidden');
 social.querySelector('.social__loadmore').classList.add('visually-hidden');
 var socialComments = social.querySelector('.social__comments');
+
+var photoUpload = document.querySelector('#upload-file');
+var photoUploadOverlay = document.querySelector('.img-upload__overlay');
+var closeUpload = document.querySelector('#upload-cancel');
+
+var photoPreview = document.querySelector('.img-upload__preview img');
+var decreaseButton = document.querySelector('.resize__control--minus');
+var increaseButton = document.querySelector('.resize__control--plus');
+var currentSize = DEFAULT_SIZE;
 
 var getRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -103,8 +114,151 @@ var createPhotoComment = function (data) {
   return photoComment;
 };
 
+var openUploadPopup = function () {
+  var uploadScale = document.querySelector('.scale');
+  var uploadDefaultEffect = document.querySelector('#effect-none');
+
+  uploadScale.classList.add('hidden');
+  uploadDefaultEffect.checked = 'true';
+
+  photoUploadOverlay.classList.remove('hidden');
+  document.addEventListener('keydown', uploadPopupEscPress);
+};
+
+var closeUploadPopup = function () {
+  photoUploadOverlay.classList.add('hidden');
+  document.removeEventListener('keydown', uploadPopupEscPress);
+};
+
+var uploadPopupEscPress = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    photoUpload.value = '';
+    closeUploadPopup();
+  }
+};
+
+var loadPicture = function (evt, i) {
+  var effectsPreview = document.querySelectorAll('.effects__preview');
+
+  photoPreview.src = URL.createObjectURL(evt.target.files[0]);
+  for (i = 0; i < effectsPreview.length; i++) {
+    effectsPreview[i].style.backgroundImage = 'url(' + URL.createObjectURL(evt.target.files[0]) + ')';
+  }
+};
+
+photoUpload.addEventListener('change', function (evt) {
+  loadPicture(evt);
+  openUploadPopup();
+});
+
+closeUpload.addEventListener('click', closeUploadPopup);
+
+var renderPhotoSize = function (photoSize) {
+  var sizeValue = document.querySelector('.resize__control--value');
+
+  sizeValue.value = photoSize + '%';
+  photoPreview.style.transform = 'scale(' + photoSize / 100 + ')';
+};
+
+var decreasePhoto = function () {
+  if (currentSize > 25) {
+    currentSize -= SIZE_STEP;
+  }
+  renderPhotoSize(currentSize);
+};
+
+var increasePhoto = function () {
+  if (currentSize < 100) {
+    currentSize += SIZE_STEP;
+  }
+  renderPhotoSize(currentSize);
+};
+
+decreaseButton.addEventListener('click', decreasePhoto);
+increaseButton.addEventListener('click', increasePhoto);
+
+var changeImageSettings = function () {
+  var imageUploadPreview = document.querySelector('.img-upload__preview');
+  var imageScale = document.querySelector('.scale');
+  var imageScalePin = imageScale.querySelector('.scale__pin');
+  var imageScaleValue = imageScale.querySelector('.scale__value');
+  var imageScaleLevel = imageScale.querySelector('.scale__level');
+  var imageScaleLine = document.querySelector('.scale__line');
+  var imageEffect = document.querySelectorAll('.effects__radio');
+  var currentEffect = '';
+
+  for (var i = 0; i < imageEffect.length; i++) {
+    imageEffect[i].addEventListener('click', function (evt) {
+      currentEffect = evt.target.value;
+      imageUploadPreview.style = '';
+      imageScalePin.style = 'left: 100%';
+      imageScaleLevel.style = 'width: 100%';
+      imageScaleValue.value = '100';
+
+      for (var j = 0; j < imageEffect.length; j++) {
+        imageUploadPreview.classList.remove('effects__preview--' + imageEffect[j].value);
+      }
+      if (evt.target.value !== 'none') {
+        imageScale.classList.remove('hidden');
+        imageUploadPreview.classList.add('effects__preview--' + evt.target.value);
+      } else {
+        imageScale.classList.add('hidden');
+      }
+    });
+  }
+
+  var getEffectOptions = function (target) {
+    var imageScaleLineX = imageScaleLine.getBoundingClientRect();
+
+    var imageScaleLineXLeft = imageScaleLineX.left;
+    var imageScalePinXLeft = target.clientX - imageScaleLineXLeft;
+    var imageScalePinXRight = imageScalePinXLeft + imageScalePin.clientWidth;
+
+    if (imageScalePinXLeft < 0) {
+      imageScalePinXLeft = 0;
+    }
+
+    if (imageScalePinXRight > imageScaleLine.clientWidth) {
+      imageScalePinXLeft = imageScaleLine.clientWidth;
+    }
+
+    var currentEffectValue = imageScalePinXLeft / imageScaleLine.clientWidth;
+
+    imageScalePin.style.left = currentEffectValue * 100 + '%';
+    imageScaleLevel.style.width = currentEffectValue * 100 + '%';
+
+    return currentEffectValue;
+  };
+
+  var applyFilters = function (currentEffectValue) {
+    switch (currentEffect) {
+      case 'chrome':
+        imageUploadPreview.style.filter = 'grayscale(' + currentEffectValue + ')';
+        break;
+      case 'sepia':
+        imageUploadPreview.style.filter = 'sepia(' + currentEffectValue + ')';
+        break;
+      case 'marvin':
+        imageUploadPreview.style.filter = 'invert(' + currentEffectValue * 100 + '%' + ')';
+        break;
+      case 'phobos':
+        imageUploadPreview.style.filter = 'blur(' + currentEffectValue * 3 + 'px' + ')';
+        break;
+      case 'heat':
+        imageUploadPreview.style.filter = 'brightness(' + currentEffectValue * 3 + ')';
+        break;
+    }
+  };
+
+  imageScale.addEventListener('mouseup', function (evt) {
+    applyFilters(getEffectOptions(evt));
+  });
+};
+
 var allPhotos = generatePhotoList(PHOTO_QUANTITY);
 
 renderPhotosList(allPhotos);
 fillBigPhoto(allPhotos[0]);
 socialComments.innerHTML = createPhotoComment(allPhotos[0]);
+
+changeImageSettings();
