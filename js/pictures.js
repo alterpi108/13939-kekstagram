@@ -30,6 +30,7 @@ var photoTemplate = document.querySelector('#picture').content;
 var photoItem = document.querySelector('.pictures');
 
 var bigPhoto = document.querySelector('.big-picture');
+var bigPhotoClose = bigPhoto.querySelector('.big-picture__cancel');
 
 var social = document.querySelector('.social');
 social.querySelector('.social__comment-count').classList.add('visually-hidden');
@@ -258,7 +259,35 @@ var changeImageSettings = function () {
 var allPhotos = generatePhotoList(PHOTO_QUANTITY);
 
 renderPhotosList(allPhotos);
-fillBigPhoto(allPhotos[0]);
-socialComments.innerHTML = createPhotoComment(allPhotos[0]);
+
+var openBigPhoto = function () {
+  bigPhoto.classList.remove('hidden');
+
+  fillBigPhoto(allPhotos[0]);
+  socialComments.innerHTML = createPhotoComment(allPhotos[0]);
+
+  document.addEventListener('keydown', onBigPhotoEscPress);
+};
+
+var closeBigPhoto = function () {
+  bigPhoto.classList.add('hidden');
+  document.removeEventListener('keydown', onBigPhotoEscPress);
+};
+
+document.addEventListener('click', function (evt) {
+  if (evt.target.classList.contains('picture__img')) {
+    openBigPhoto();
+  }
+});
+
+bigPhotoClose.addEventListener('click', function () {
+  closeBigPhoto();
+});
+
+var onBigPhotoEscPress = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    closeBigPhoto();
+  }
+};
 
 changeImageSettings();
