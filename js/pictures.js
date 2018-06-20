@@ -98,24 +98,20 @@ for (var i = 0; i < allPhotos.length; i++) {
 photoItem.appendChild(fragment);
 
 var fillBigPhoto = function (photoData) {
-  var photoNumber = photoData.dataset.number;
-
-  bigPhoto.querySelector('.big-picture__img img').src = allPhotos[photoNumber].url;
-  bigPhoto.querySelector('.likes-count').textContent = allPhotos[photoNumber].likes;
-  bigPhoto.querySelector('.social__caption').textContent = allPhotos[photoNumber].description;
+  bigPhoto.querySelector('.big-picture__img img').src = photoData.url;
+  bigPhoto.querySelector('.likes-count').textContent = photoData.likes;
+  bigPhoto.querySelector('.social__caption').textContent = photoData.description;
 };
 
 var createPhotoComment = function (data) {
-  var photoNumber = data.dataset.number;
-
   socialComments.innerHTML = '';
 
-  bigPhoto.querySelector('.comments-count').textContent = allPhotos[photoNumber].comments.length;
+  bigPhoto.querySelector('.comments-count').textContent = data.comments.length;
 
   var photoComment = '';
 
-  for (i = 0; i < allPhotos[photoNumber].comments.length; i++) {
-    photoComment += '<li class="social__comment social__comment--text"><img class="social__picture" src="img/avatar-' + getRandomNumber(1, 6) + '.svg" alt="Аватар комментатора фотографии" width="35" height="35"><p class="social__text">' + allPhotos[photoNumber].comments[i] + '</p></li>';
+  for (i = 0; i < data.comments.length; i++) {
+    photoComment += '<li class="social__comment social__comment--text"><img class="social__picture" src="img/avatar-' + getRandomNumber(1, 6) + '.svg" alt="Аватар комментатора фотографии" width="35" height="35"><p class="social__text">' + data.comments[i] + '</p></li>';
   }
 
   return photoComment;
@@ -267,11 +263,13 @@ var changeImageSettings = function () {
 var photoLink = document.querySelectorAll('.picture__link');
 
 var openBigPhoto = function (evt) {
+  var photoNumber = evt.target.parentNode.dataset.number;
+
   bigPhoto.classList.remove('hidden');
   document.addEventListener('keydown', onBigPhotoEscPress);
 
-  fillBigPhoto(evt.target.parentNode);
-  socialComments.innerHTML = createPhotoComment(evt.target.parentNode);
+  fillBigPhoto(allPhotos[photoNumber]);
+  socialComments.innerHTML = createPhotoComment(allPhotos[photoNumber]);
 };
 
 for (i = 0; i < photoLink.length; i++) {
