@@ -89,13 +89,13 @@ var createPhotoElement = function (photoData, photoNumber) {
   return photo;
 };
 
-var Fragment = document.createDocumentFragment();
+var fragment = document.createDocumentFragment();
 
 for (var i = 0; i < allPhotos.length; i++) {
-  Fragment.appendChild(createPhotoElement(allPhotos[i], i));
+  fragment.appendChild(createPhotoElement(allPhotos[i], i));
 }
 
-photoItem.appendChild(Fragment);
+photoItem.appendChild(fragment);
 
 var fillBigPhoto = function (photoData) {
   var photoNumber = photoData.dataset.number;
