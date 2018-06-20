@@ -46,6 +46,10 @@ var decreaseButton = document.querySelector('.resize__control--minus');
 var increaseButton = document.querySelector('.resize__control--plus');
 var currentSize = DEFAULT_SIZE;
 
+var hashtags = photoItem.querySelector('.text__hashtags');
+var formDescription = photoItem.querySelector('.text__description');
+
+
 var getRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
@@ -290,3 +294,51 @@ var onBigPhotoEscPress = function (evt) {
 };
 
 changeImageSettings();
+
+var verifyRepeatHashtag = function (repeats) {
+  var inputHashtag = [];
+
+  for (i = 0; i < repeats.length; i++) {
+    if (inputHashtag[repeats[i]]) {
+      return false;
+    }
+    inputHashtag[repeats[i]] = true;
+  }
+
+  return true;
+};
+
+var checkValidHashtag = function () {
+
+  var hashtagQuantity = hashtags.value.trim().toLowerCase().split(' ');
+
+  if (hashtagQuantity.length > 5) {
+    hashtags.setCustomValidity('Используйте не более 5ти хеш-тегов');
+  } else {
+    for (i = 0; i < hashtagQuantity.length; i++) {
+      if (hashtagQuantity[i].charAt(0) !== '#') {
+        hashtags.setCustomValidity('Хеш-тег должен начинаться с # (решетки)');
+      } else if (hashtagQuantity[i] === '#') {
+        hashtags.setCustomValidity('Хеш-тег не может состоять только из # (решётки)');
+      } else if (hashtagQuantity[i].includes('#', 1)) {
+        hashtags.setCustomValidity('Хэш-теги должны разделяться пробелами');
+      } else if (hashtagQuantity[i].length > 20) {
+        hashtags.setCustomValidity('Максимальная длина хэш-тега не должна превышать 20 символов');
+      } else if (!verifyRepeatHashtag(hashtagQuantity)) {
+        hashtags.setCustomValidity('Хэш-теги не должны повторяться');
+      } else {
+        hashtags.setCustomValidity('');
+      }
+    }
+  }
+};
+
+var onFormEscPress = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    evt.stopPropagation();
+  }
+};
+
+hashtags.addEventListener('input', checkValidHashtag);
+hashtags.addEventListener('keydown', onFormEscPress);
+formDescription.addEventListener('keydown', onFormEscPress);
