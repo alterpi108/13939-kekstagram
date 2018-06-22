@@ -312,13 +312,15 @@ var checkValidHashtag = function () {
 
   hashtags.setCustomValidity('');
 
-  if (inputHashtags.length > 5) {
+  if (hashtags.value === '') {
+    return;
+  } if (inputHashtags.length > 5) {
     hashtags.setCustomValidity('Используйте не более 5ти хеш-тегов');
   } else if (!verifyRepeatHashtag(inputHashtags)) {
     hashtags.setCustomValidity('Хэш-теги не должны повторяться');
   } else {
     for (i = 0; i < inputHashtags.length; i++) {
-      if (inputHashtags[i].charAt(0) !== '#' && inputHashtags[0].charAt(0) !== '') {
+      if (inputHashtags[i].charAt(0) !== '#') {
         hashtags.setCustomValidity('Хеш-тег должен начинаться с # (решетки)');
       } else if (inputHashtags[i] === '#') {
         hashtags.setCustomValidity('Хеш-тег не может состоять только из # (решётки)');
@@ -337,6 +339,6 @@ var onFormEscPress = function (evt) {
   }
 };
 
-hashtags.addEventListener('input', checkValidHashtag);
+hashtags.addEventListener('change', checkValidHashtag);
 hashtags.addEventListener('keydown', onFormEscPress);
 formDescription.addEventListener('keydown', onFormEscPress);
