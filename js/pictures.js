@@ -314,7 +314,9 @@ var checkValidHashtag = function () {
 
   if (hashtags.value === '') {
     return;
-  } if (inputHashtags.length > 5) {
+  }
+
+  if (inputHashtags.length > 5) {
     hashtags.setCustomValidity('Используйте не более 5ти хеш-тегов');
   } else if (!verifyRepeatHashtag(inputHashtags)) {
     hashtags.setCustomValidity('Хэш-теги не должны повторяться');
