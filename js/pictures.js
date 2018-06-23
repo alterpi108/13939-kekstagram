@@ -187,7 +187,6 @@ var changeImageSettings = function () {
   var imageUploadPreview = document.querySelector('.img-upload__preview');
   var imageScale = document.querySelector('.scale');
   var imageScalePin = imageScale.querySelector('.scale__pin');
-  var imageScaleValue = imageScale.querySelector('.scale__value');
   var imageScaleLevel = imageScale.querySelector('.scale__level');
   var imageScaleLine = document.querySelector('.scale__line');
   var imageEffect = document.querySelectorAll('.effects__radio');
@@ -200,7 +199,6 @@ var changeImageSettings = function () {
         imageUploadPreview.style = '';
         imageScalePin.style = 'left: 100%';
         imageScaleLevel.style = 'width: 100%';
-        imageScaleValue.value = '100';
 
         imageUploadPreview.className = 'img-upload__preview';
 
@@ -236,6 +234,23 @@ var changeImageSettings = function () {
 
     return currentEffectValue;
   };
+
+  var onMouseMove = function (evt) {
+    evt.preventDefault();
+    applyFilters(getEffectOptions(evt));
+  };
+
+  var onMouseUp = function (evt) {
+    evt.preventDefault();
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+
+  imageScalePin.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  });
 
   var applyFilters = function (currentEffectValue) {
     switch (currentEffect) {
