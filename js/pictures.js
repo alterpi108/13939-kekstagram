@@ -267,7 +267,7 @@ var changeImageSettings = function () {
         imageUploadPreview.style.filter = 'blur(' + currentEffectValue * 3 + 'px' + ')';
         break;
       case 'heat':
-        imageUploadPreview.style.filter = 'brightness(' + currentEffectValue * 3 + ')';
+        imageUploadPreview.style.filter = 'brightness(' + (1 + currentEffectValue * 2) + ')';
         break;
     }
   };
