@@ -215,22 +215,21 @@ var changeImageSettings = function () {
   var getEffectOptions = function (target) {
     var imageScaleLineX = imageScaleLine.getBoundingClientRect();
 
-    var imageScaleLineXLeft = imageScaleLineX.left;
-    var imageScalePinXLeft = target.clientX - imageScaleLineXLeft;
-    var imageScalePinXRight = imageScalePinXLeft + imageScalePin.clientWidth;
+    var imageScaleLinePositionX = imageScaleLineX.left;
+    var imageScalePinX = target.clientX - imageScaleLinePositionX;
 
-    if (imageScalePinXLeft < 0) {
-      imageScalePinXLeft = 0;
+    if (imageScalePinX < 0) {
+      imageScalePinX = 0;
     }
 
-    if (imageScalePinXRight > imageScaleLine.clientWidth) {
-      imageScalePinXLeft = imageScaleLine.clientWidth;
+    if (imageScalePinX > imageScaleLine.offsetWidth) {
+      imageScalePinX = imageScaleLine.offsetWidth;
     }
 
-    var currentEffectValue = imageScalePinXLeft / imageScaleLine.clientWidth;
+    var currentEffectValue = imageScalePinX / imageScaleLine.offsetWidth;
 
-    imageScalePin.style.left = currentEffectValue * 100 + '%';
-    imageScaleLevel.style.width = currentEffectValue * 100 + '%';
+    imageScalePin.style.left = Math.floor(currentEffectValue * 100) + '%';
+    imageScaleLevel.style.width = Math.floor(currentEffectValue * 100) + '%';
 
     return currentEffectValue;
   };
