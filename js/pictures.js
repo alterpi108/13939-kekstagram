@@ -187,7 +187,6 @@ var changeImageSettings = function () {
   var imageUploadPreview = document.querySelector('.img-upload__preview');
   var imageScale = document.querySelector('.scale');
   var imageScalePin = imageScale.querySelector('.scale__pin');
-  var imageScaleValue = imageScale.querySelector('.scale__value');
   var imageScaleLevel = imageScale.querySelector('.scale__level');
   var imageScaleLine = document.querySelector('.scale__line');
   var imageEffect = document.querySelectorAll('.effects__radio');
@@ -200,7 +199,6 @@ var changeImageSettings = function () {
         imageUploadPreview.style = '';
         imageScalePin.style = 'left: 100%';
         imageScaleLevel.style = 'width: 100%';
-        imageScaleValue.value = '100';
 
         imageUploadPreview.className = 'img-upload__preview';
 
@@ -217,25 +215,41 @@ var changeImageSettings = function () {
   var getEffectOptions = function (target) {
     var imageScaleLineX = imageScaleLine.getBoundingClientRect();
 
-    var imageScaleLineXLeft = imageScaleLineX.left;
-    var imageScalePinXLeft = target.clientX - imageScaleLineXLeft;
-    var imageScalePinXRight = imageScalePinXLeft + imageScalePin.clientWidth;
+    var imageScaleLinePositionX = imageScaleLineX.left;
+    var imageScalePinX = target.clientX - imageScaleLinePositionX;
 
-    if (imageScalePinXLeft < 0) {
-      imageScalePinXLeft = 0;
+    if (imageScalePinX < 0) {
+      imageScalePinX = 0;
     }
 
-    if (imageScalePinXRight > imageScaleLine.clientWidth) {
-      imageScalePinXLeft = imageScaleLine.clientWidth;
+    if (imageScalePinX > imageScaleLine.offsetWidth) {
+      imageScalePinX = imageScaleLine.offsetWidth;
     }
 
-    var currentEffectValue = imageScalePinXLeft / imageScaleLine.clientWidth;
+    var currentEffectValue = imageScalePinX / imageScaleLine.offsetWidth;
 
-    imageScalePin.style.left = currentEffectValue * 100 + '%';
-    imageScaleLevel.style.width = currentEffectValue * 100 + '%';
+    imageScalePin.style.left = Math.floor(currentEffectValue * 100) + '%';
+    imageScaleLevel.style.width = Math.floor(currentEffectValue * 100) + '%';
 
     return currentEffectValue;
   };
+
+  var onMouseMove = function (evt) {
+    evt.preventDefault();
+    applyFilters(getEffectOptions(evt));
+  };
+
+  var onMouseUp = function (evt) {
+    evt.preventDefault();
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+
+  imageScalePin.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  });
 
   var applyFilters = function (currentEffectValue) {
     switch (currentEffect) {
@@ -252,7 +266,7 @@ var changeImageSettings = function () {
         imageUploadPreview.style.filter = 'blur(' + currentEffectValue * 3 + 'px' + ')';
         break;
       case 'heat':
-        imageUploadPreview.style.filter = 'brightness(' + currentEffectValue * 3 + ')';
+        imageUploadPreview.style.filter = 'brightness(' + (1 + currentEffectValue * 2) + ')';
         break;
     }
   };
