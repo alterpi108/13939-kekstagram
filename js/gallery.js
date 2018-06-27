@@ -7,8 +7,6 @@
   var photoTemplate = document.querySelector('#picture').content;
   var photoItem = document.querySelector('.pictures');
 
-  var allPhotos = window.data.generatePhotoList(PHOTO_QUANTITY);
-
   var createPhotoElement = function (photoData, photoNumber) {
     var photo = photoTemplate.cloneNode(true);
 
@@ -20,16 +18,16 @@
     return photo;
   };
 
-  var fragment = document.createDocumentFragment();
+  var renderAllPhotos = function (photos) {
+    var fragment = document.createDocumentFragment();
 
-  for (var i = 0; i < allPhotos.length; i++) {
-    fragment.appendChild(createPhotoElement(allPhotos[i], i));
-  }
+    for (var i = 0; i < PHOTO_QUANTITY; i++) {
+      fragment.appendChild(createPhotoElement(photos[i], i));
+    }
 
-  photoItem.appendChild(fragment);
-
-  window.gallery = {
-    allPhotos: allPhotos
+    photoItem.appendChild(fragment);
   };
+
+  window.backend.load(renderAllPhotos, window.renderError);
 
 })();
